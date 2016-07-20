@@ -1,1 +1,181 @@
-
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			#time{
+				margin: 30px auto;
+				font-size: 0;
+				text-align: center;
+			}
+			#time li{
+				list-style: none;
+				width: 60px;
+				height: 85px;
+				position: relative;
+				display: inline-block;
+				overflow: hidden;
+				
+			}
+			#time li div{
+				position: absolute;
+				top: 0;
+			}
+			#time li img{
+				width: 60px;
+				height: 85px;
+			}
+		</style>
+		<script src="js/mTween.js"></script>
+		<script>
+			window.onload=function(){
+				/*
+				 * prevTime	上一秒的时间
+				 * 声明一个上一秒的时间，初始化为00:00:00。目的是为了与下一秒的时间做对比，找到不一样的字符，不一样的字符就是我们要运动的时间
+				 */
+				var divs=document.querySelectorAll('#time div');
+				var prevTime='00:00:00';
+				var n=0;
+				
+				function getTime(){
+					var d=new Date();
+					/*
+					 * 声明一个当前的时间，把它转成字符串，与上一秒的时间做对比
+					 */
+					var currTime=''+format(d.getHours())+':'+format(d.getMinutes())+':'+format(d.getSeconds())+'';
+					//console.log(prevTime,currTime);
+					
+					for(var i=0;i<currTime.length;i++){
+						divs[i].index=i;
+						/*
+						 * 这个条件成立的话，说明我们现在操作的是两个字符串不同的字符
+						 * 第一次的时候
+						 * prevTime		00:00:00
+						 * currTime		10:53:14
+						 * 
+						 * 
+						 * 第二次以后
+						 * prevTime		10:53:13
+						 * currTime		10:53:14
+						 * 
+						 * 循环它们做对比发现只有最后一个字符不同，所以给一个判断条件找到不同的字符。
+						 
+						 * 
+						 * <img src="img2/4.jpg" alt="" />
+						 * <img src="img2/3.jpg" alt="" />
+						 */
+						if(currTime[i]!=prevTime[i]){
+							//currTime[i]	4
+							//prevTime[i]	3
+							
+							var imgs=divs[i].querySelectorAll('img');
+							
+							//一个div里有两个图片，对应两个时间，一个图片对应prevTime，一个图片对应currTime
+							imgs[0].src='img2/'+prevTime[i]+'.jpg';
+							imgs[1].src='img2/'+currTime[i]+'.jpg';
+							
+							
+							mTween(divs[i],{"top":-85},200,'linear',function(){
+								/*
+								 * 这里面的this是指向window的，但是我在运动库里用call的方法改了一下this指向，把this的指向改成了当前元素，这个里this就是当前运动的对象
+								 */
+								
+								//这个img代表了当前运动完成之后的img，外面的是所有的img
+								var imgs=this.querySelectorAll('img');
+								
+								
+								//运动完成后，正确的时间跑到了上面，下一秒的时间在上面，所以把它们调换一下位置就可以了
+								imgs[0].src='img2/'+currTime[this.index]+'.jpg';
+								imgs[1].src='img2/'+prevTime[this.index]+'.jpg';
+								
+								//运动完成后让div的top值回到0
+								this.style.top=0;
+							});
+						}
+					}
+					
+					/*
+					 * 变化两个点，因为n模上一个2的话会循环的得出0 1 0 1。
+					 * 根据这个值不断的去修改它的图片地址就可以了
+					 */
+					
+					n++;
+					
+					divs[2].querySelector('img').src='img2/colon'+(n%2)+'.jpg';
+					divs[5].querySelector('img').src='img2/colon'+(n%2)+'.jpg';
+					
+					/*
+					 * prevTime=currTime;
+					 * 这句话执行之前，上一秒的时间与下一秒的时间是不同的
+					 * 这句话执行之后，上一秒的时间与下一秒的时间是相同的
+					 * 
+					 */
+					prevTime=currTime;
+				};
+				
+				setInterval(getTime,500);
+				
+				function format(v){
+					return v<10?'0'+v:''+v;
+				}
+			};
+		</script>
+	</head>
+	<body>
+		<div id="time">
+			<ul>
+				<li>
+					<div>
+						<img src="img2/0.jpg" alt="" />
+						<img src="img2/0.jpg" alt="" />
+					</div>
+				</li>
+				<li>
+					<div>
+						<img src="img2/0.jpg" alt="" />
+						<img src="img2/0.jpg" alt="" />
+					</div>
+				</li>
+				<li>
+					<div>
+						<img src="img2/colon0.jpg" alt="" />
+					</div>
+				</li>
+				<li>
+					<div>
+						<img src="img2/0.jpg" alt="" />
+						<img src="img2/0.jpg" alt="" />
+					</div>
+				</li>
+				<li>
+					<div>
+						<img src="img2/0.jpg" alt="" />
+						<img src="img2/0.jpg" alt="" />
+					</div>
+				</li>
+				<li>
+					<div>
+						<img src="img2/colon0.jpg" alt="" />
+					</div>
+				</li>
+				<li>
+					<div>
+						<img src="img2/0.jpg" alt="" />
+						<img src="img2/0.jpg" alt="" />
+					</div>
+				</li>
+				<li>
+					<div>
+						<img src="img2/0.jpg" alt="" />
+						<img src="img2/0.jpg" alt="" />
+					</div>
+				</li>
+			</ul>
+		</div>
+	</body>
+</html>
