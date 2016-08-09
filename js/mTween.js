@@ -57,7 +57,7 @@ function mTween(obj, attrs, duration, fx, callback) {
         if ( t == d ) {
             clearInterval(obj.timer);
             if (typeof callback == 'function') {
-                callback.call(obj);
+                callback();
             }
 
         }

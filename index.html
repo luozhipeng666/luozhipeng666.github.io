@@ -1,181 +1,665 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title></title>
-		<style>
-			*{
-				margin: 0;
-				padding: 0;
-			}
-			#time{
-				margin: 30px auto;
-				font-size: 0;
-				text-align: center;
-			}
-			#time li{
-				list-style: none;
-				width: 60px;
-				height: 85px;
-				position: relative;
-				display: inline-block;
-				overflow: hidden;
-				
-			}
-			#time li div{
-				position: absolute;
-				top: 0;
-			}
-			#time li img{
-				width: 60px;
-				height: 85px;
-			}
-		</style>
-		<script src="js/mTween.js"></script>
-		<script>
-			window.onload=function(){
-				/*
-				 * prevTime	上一秒的时间
-				 * 声明一个上一秒的时间，初始化为00:00:00。目的是为了与下一秒的时间做对比，找到不一样的字符，不一样的字符就是我们要运动的时间
-				 */
-				var divs=document.querySelectorAll('#time div');
-				var prevTime='00:00:00';
-				var n=0;
-				
-				function getTime(){
-					var d=new Date();
-					/*
-					 * 声明一个当前的时间，把它转成字符串，与上一秒的时间做对比
-					 */
-					var currTime=''+format(d.getHours())+':'+format(d.getMinutes())+':'+format(d.getSeconds())+'';
-					//console.log(prevTime,currTime);
-					
-					for(var i=0;i<currTime.length;i++){
-						divs[i].index=i;
-						/*
-						 * 这个条件成立的话，说明我们现在操作的是两个字符串不同的字符
-						 * 第一次的时候
-						 * prevTime		00:00:00
-						 * currTime		10:53:14
-						 * 
-						 * 
-						 * 第二次以后
-						 * prevTime		10:53:13
-						 * currTime		10:53:14
-						 * 
-						 * 循环它们做对比发现只有最后一个字符不同，所以给一个判断条件找到不同的字符。
-						 
-						 * 
-						 * <img src="img2/4.jpg" alt="" />
-						 * <img src="img2/3.jpg" alt="" />
-						 */
-						if(currTime[i]!=prevTime[i]){
-							//currTime[i]	4
-							//prevTime[i]	3
-							
-							var imgs=divs[i].querySelectorAll('img');
-							
-							//一个div里有两个图片，对应两个时间，一个图片对应prevTime，一个图片对应currTime
-							imgs[0].src='img2/'+prevTime[i]+'.jpg';
-							imgs[1].src='img2/'+currTime[i]+'.jpg';
-							
-							
-							mTween(divs[i],{"top":-85},200,'linear',function(){
-								/*
-								 * 这里面的this是指向window的，但是我在运动库里用call的方法改了一下this指向，把this的指向改成了当前元素，这个里this就是当前运动的对象
-								 */
-								
-								//这个img代表了当前运动完成之后的img，外面的是所有的img
-								var imgs=this.querySelectorAll('img');
-								
-								
-								//运动完成后，正确的时间跑到了上面，下一秒的时间在上面，所以把它们调换一下位置就可以了
-								imgs[0].src='img2/'+currTime[this.index]+'.jpg';
-								imgs[1].src='img2/'+prevTime[this.index]+'.jpg';
-								
-								//运动完成后让div的top值回到0
-								this.style.top=0;
-							});
-						}
-					}
-					
-					/*
-					 * 变化两个点，因为n模上一个2的话会循环的得出0 1 0 1。
-					 * 根据这个值不断的去修改它的图片地址就可以了
-					 */
-					
-					n++;
-					
-					divs[2].querySelector('img').src='img2/colon'+(n%2)+'.jpg';
-					divs[5].querySelector('img').src='img2/colon'+(n%2)+'.jpg';
-					
-					/*
-					 * prevTime=currTime;
-					 * 这句话执行之前，上一秒的时间与下一秒的时间是不同的
-					 * 这句话执行之后，上一秒的时间与下一秒的时间是相同的
-					 * 
-					 */
-					prevTime=currTime;
-				};
-				
-				setInterval(getTime,500);
-				
-				function format(v){
-					return v<10?'0'+v:''+v;
-				}
-			};
-		</script>
-	</head>
-	<body>
-		<div id="time">
-			<ul>
-				<li>
-					<div>
-						<img src="img2/0.jpg" alt="" />
-						<img src="img2/0.jpg" alt="" />
-					</div>
-				</li>
-				<li>
-					<div>
-						<img src="img2/0.jpg" alt="" />
-						<img src="img2/0.jpg" alt="" />
-					</div>
-				</li>
-				<li>
-					<div>
-						<img src="img2/colon0.jpg" alt="" />
-					</div>
-				</li>
-				<li>
-					<div>
-						<img src="img2/0.jpg" alt="" />
-						<img src="img2/0.jpg" alt="" />
-					</div>
-				</li>
-				<li>
-					<div>
-						<img src="img2/0.jpg" alt="" />
-						<img src="img2/0.jpg" alt="" />
-					</div>
-				</li>
-				<li>
-					<div>
-						<img src="img2/colon0.jpg" alt="" />
-					</div>
-				</li>
-				<li>
-					<div>
-						<img src="img2/0.jpg" alt="" />
-						<img src="img2/0.jpg" alt="" />
-					</div>
-				</li>
-				<li>
-					<div>
-						<img src="img2/0.jpg" alt="" />
-						<img src="img2/0.jpg" alt="" />
-					</div>
-				</li>
-			</ul>
-		</div>
-	</body>
+<head>
+<meta charset="utf-8">
+<title>vision</title>
+<link href="css/style.css" rel="stylesheet"/>
+<script src="js/DD_belatedPNG_0.0.8a.js"></script>
+<script src="js/jquery-1.11.1.js"></script>
+<script src="js/mTween.js"></script>
+<script src="js/jQuery Easing.js"></script>
+<script src="js/jquery.mousewheel.js"></script>
+<script src="js/data.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.3"></script>
+<!--[if IE 6]>
+<script src="DD_belatedPNG_0.0.8a.js"></script>
+<script>
+DD_belatedPNG.fix('*');
+</script>
+<![endif]-->
+</head>
+
+<body>
+<div id="stick" >
+	<a href="javascript:;"></a>	
+</div>
+<!-- header -->
+<div id="header">
+	<div class="wrap">
+    	<h1 class="fl"><a href="" title="tg-vision"><img src="img/logo.jpg"/></a></h1>
+        <div class="search fr">
+        	<a href="#"></a>
+        	<div class="search_warp">
+            	<form action="#" id="form">
+                	<input type="text" class="text" value="" name=""/>
+                	<input type="button" class="btn" value="" name=""/>
+                </form>
+            </div>
+        </div>
+        <ul class="head_nav fr" id="head_nav"> 
+        	<li class="active">
+            	<a href="#Home">首页</a>
+                <span></span>
+           </li>
+        	<li>
+            	<a href="#portfolio">案例</a>
+                <span></span>
+           </li>
+        	<li>
+            	<a href="#services">服务</a>
+                <span></span>
+           </li>
+        	<li>
+            	<a href="#">关于</a>
+                <span></span>
+           </li>
+        	<li>
+            	<a href="#">联系</a>
+                <span></span>
+           </li>
+        </ul>       
+    </div>
+</div>
+<!-- banner -->
+<div id="banner" class="dis_top">
+	<div class="banner_tab">
+    	<ul>
+        	<li class="banner1">
+            	<div class="left_img">
+                	<a href="javascript:;"><img src="img/banner/banner_01.png" /></a>
+                </div>
+            	<div class="right_img">
+                	<a href="javascript:;"><img src="img/banner/banner_02.png" /></a>
+                </div>
+            </li>
+        	<li class="banner2">
+            	<div class="left_img">
+                	<a href="javascript:;"><img src="img/banner/banner_03.png" /></a>
+                </div>
+            	<div class="right_img">
+                	<a href="javascript:;"><img src="img/banner/banner_04.png" /></a>
+                </div>
+            </li>
+        	<li class="banner3">
+            	<div class="left_img">
+                	<a href="javascript:;"><img src="img/banner/banner_05.png" /></a>
+                </div>
+            	<div class="right_img">
+                	<a href="javascript:;"><img src="img/banner/banner_06.png" style="position:relative; top:4px;"/></a>
+                </div>
+            </li>
+        	<li class="banner4">
+            	<div class="left_img">
+                	<a href="javascript:;"><img src="img/banner/banner_07.png" /></a>
+                </div>
+            	<div class="right_img">
+                	<a href="javascript:;"><img src="img/banner/banner_08.png" /></a>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <a href="javascript:;" class="left_btn"></a>
+    <a href="javascript:;" class="right_btn"></a>
+</div>
+<!-- portfolio -->
+<div id="portfolio" class="dis_top">
+	<div class="area_title">
+    	<h2></h2>
+    </div>
+    <div class="wrap"> 
+    	<div class="portfolio_tab">
+            <ul>
+                <li class="active">
+                    <a href="javascript:;">精选案例</a>
+                    <span></span>	
+                </li>
+                <li>
+                    <a href="javascript:;">移动应用</a>
+                    <span></span>	
+                </li>
+                <li>
+                    <a href="javascript:;">网站页面</a>
+                    <span></span>	
+                </li>
+                <li>
+                    <a href="javascript:;">标志图标</a>
+                    <span></span>	
+                </li>
+            </ul>
+        </div>
+        <div class="portfolio_content">
+        	<ul class="clear ">
+<!--            	<li>
+                	<a href="#">
+                    	<div class="explain">
+                        	<h3>7度珠宝APP</h3>
+                            <span>Mobile APP</span>
+                        </div>
+                        <img src="img/portfolio_img/ex_1_01.jpg"/>
+                    </a>
+                </li>-->
+<!--            	<li>
+                	<a href="#">
+                    	<div class="explain">
+                        	<h3>Z服饰品牌官网</h3>
+                            <span>Web APP</span>
+                        </div>
+                        <img src="img/portfolio_img/portfolio_02.jpg"/>
+                    </a>
+                </li>
+            	<li>
+                	<a href="#">
+                    	<div class="explain">
+                        	<h3>TANLEO美镜多媒体系统</h3>
+                            <span>Mobile APP</span>
+                        </div>
+                        <img src="img/portfolio_img/portfolio_03.jpg"/>
+                    </a>
+                </li>
+            	<li>
+                	<a href="#">
+                    	<div class="explain">
+                        	<h3>Bronsu UI</h3>
+                            <span>Mobile APP</span>
+                        </div>
+                        <img src="img/portfolio_img/portfolio_04.jpg"/>
+                    </a>
+                </li>
+            	<li>
+                	<a href="#">
+                    	<div class="explain">
+                        	<h3>大连未来城LECITY</h3>
+                            <span>Web UI</span>
+                        </div>
+                        <img src="img/portfolio_img/portfolio_05.jpg"/>
+                    </a>
+                </li>
+            	<li>
+                	<a href="#">
+                    	<div class="explain">
+                        	<h3>Lenovo Technology Flash M</h3>
+                            <span>Web UI</span>
+                        </div>
+                        <img src="img/portfolio_img/portfolio_06.jpg"/>
+                    </a>
+                </li>
+            	<li>
+                	<a href="#">
+                    	<div class="explain">
+                        	<h3>7Q Online Music Player</h3>
+                            <span>Web UI</span>
+                        </div>
+                        <img src="img/portfolio_img/portfolio_07.jpg"/>
+                    </a>
+                </li>
+            	<li>
+                	<a href="#">
+                    	<div class="explain">
+                        	<h3>移动应用图标设计集锦</h3>
+                            <span>Logo & lcon</span>
+                        </div>
+                        <img src="img/portfolio_img/portfolio_08.jpg"/>
+                    </a>
+                </li>
+            	<li>
+                	<a href="#">
+                    	<div class="explain">
+                        	<h3>ChinaDaily亚太官网</h3>
+                            <span>Web UI</span>
+                        </div>
+                        <img src="img/portfolio_img/portfolio_09.jpg"/>
+                    </a>
+                </li>-->
+            </ul>
+        </div>
+        <div class="page">
+			<a href="javascript:;" class="prev"><</a>
+            <span class="pages"></span>
+            <a href="javascript:;" class="next">></a>
+        </div>
+    </div>
+</div>
+<!-- services -->
+<div id="services"  class="dis_top">
+	<div class="area_title">
+    	<h2></h2>
+    </div>	
+    <div class="services_wrap">
+       <div class="popup">
+            <div class="wrap">
+                <div class="popup_content">
+                	<div class="close"></div> 
+                    <ul>
+                    	<li class="content1 popup_li" style="display:none">
+                            <img src="img/popup_01.jpg"/>                    
+                            <div class="right_side">
+                                <div class="right_side_title">
+                                    <h3>移动应用产品解决方案</h3>
+                                    <span>Mobile app solutions</span>
+                                </div>
+                                <div class="move_app clear">
+                                    <span class="bg1">IOS</span>
+                                    <span class="bg2">Android</span>
+                                    <span class="bg3">微信</span>
+                                </div>
+                                <ul class="list">
+                                    <li>iOS/Android APP交互设计 视觉设计 功能定制开发</li>
+                                    <li>微信公众平台，基于HTML5的手机站 交互设计 视觉设计 功能定制开发</li>
+                                </ul>
+                                <a href="#" class="btn">移动应用案例</a>
+                       		</div>                        	
+                        </li>
+                        <li class="content2 popup_li" style="display:none">
+                        	<img src="img/popup_02.jpg"/>
+                            <div class="right_pc">
+                            	<h3>应用软件解决方案</h3>
+                                <span>Application software solutions</span>
+                                <p>我们提供Windows及Mac等多操作系统多平台的应用软件交互设计、视觉设计、应用端开发服务。从用户研究、需求沟通、草图方案、原型制图、视觉设计、定制开发、软件测试维护等全方位的为客户提供最有效的解决方案。</p>
+                            </div>
+                        </li>
+                        <li class="content3 popup_li" style="display:none">
+                            <img src="img/popup_03.jpg"/>  	         
+                            <div class="left_inter">
+                            	<h3>网站及网络产品解决方案</h3>
+                                <span>Web and network solutions</span>
+                                <p>根据用户的需求、市场状况、企业情况等进行综合分析可用性的Web解决方案，有效提升企业形象及品牌的知名度。从产品交互原型设计、视觉设计、HTML5页面开发、功能定制开发等高品质、一体化流程的网站建设服务。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            	<div class="popup_tab">
+                    <ul>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="wrap">
+        	<div class="pro">
+            	<ul class="clear">
+                	<li>
+                    	<div class="mask"></div>
+                        <div class="app_img">
+                        	<img src="img/phone_01.png"/ class="img1">
+                            <img src="img/phone_02.png"/ class="img2">
+                        </div>
+                        <div class="app_explain">
+                        	<div class="write1">
+                            	<h3>移动应用产品解决方案</h3>
+                                <p>iOS/Android/微信公众平台 APP交互设计、视觉设计、HTML5开发、功能定制开发</p>
+                            </div>
+                        	<div class="write2">
+                            	<h3>移动应用产品解决方案</h3>
+                                <p>iOS/Android/微信公众平台 APP交互设计、视觉设计、HTML5开发、功能定制开发</p>
+                            </div>
+                        </div>
+                    </li>
+                	<li>
+                    	<div class="mask"></div>
+                        <div class="app_img">
+                        	<img src="img/pc_01.png"/ class="img1">
+                            <img src="img/pc_02.png"/ class="img2">
+                        </div>
+                        <div class="app_explain">
+                        	<div class="write1">
+                            	<h3>应用软件解决方案</h3>
+                                <p>多操作系统多平台的应用软件交互设计、视觉设计、应用端开发服务</p>
+                            </div>
+                        	<div class="write2">
+                            	<h3>应用软件解决方案</h3>
+                                <p>多操作系统多平台的应用软件交互设计、视觉设计、应用端开发服务</p>
+                            </div>
+                        </div>
+                    </li>
+                	<li class="last_li">
+                    	<div class="mask"></div>
+                        <div class="app_img">
+                        	<img src="img/word_01.png"/ class="img1">
+                            <img src="img/word_02.png"/ class="img2">
+                        </div>
+                        <div class="app_explain">
+                        	<div class="write1">
+                            	<h3>网站及网络产品解决方案</h3>
+                                <p>根据用户的需求、市场状况、企业情况等进行综合分析可用性的Web解决方案</p>
+                            </div>
+                        	<div class="write2">
+                            	<h3>网站及网络产品解决方案</h3>
+                                <p>多操作系统多平台的应用软件交互设计、视觉设计、应用端开发服务</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="partner">
+            	<ul class="clear">
+                	<li><img src="img/link_img/link_01.gif"/></li>
+                	<li><img src="img/link_img/link_02.gif"/></li>
+                	<li><img src="img/link_img/link_03.gif"/></li>
+                	<li><img src="img/link_img/link_04.gif"/></li>
+                	<li><img src="img/link_img/link_05.gif"/></li>
+                	<li><img src="img/link_img/link_06.gif"/></li>
+                	<li><img src="img/link_img/link_07.gif"/></li>
+                	<li><img src="img/link_img/link_08.gif"/></li>
+                	<li><img src="img/link_img/link_09.gif"/></li>
+                	<li><img src="img/link_img/link_10.gif"/></li>
+                	<li><img src="img/link_img/link_11.gif"/></li>
+                	<li><img src="img/link_img/link_12.gif"/></li>
+                	<li><img src="img/link_img/link_13.gif"/></li>
+                	<li><img src="img/link_img/link_14.gif"/></li>
+                	<li><img src="img/link_img/link_15.gif"/></li>
+                	<li><img src="img/link_img/link_16.gif"/></li>
+                	<li><img src="img/link_img/link_17.gif"/></li>
+                	<li><img src="img/link_img/link_18.gif"/></li>
+                </ul>
+            </div>
+        </div>        	
+    </div>
+ 
+</div>
+<!-- about -->
+<div id="about"  class="dis_top">
+	<div class="area_title">
+    	<h2></h2>
+    </div>
+    <div class="wrap">
+    	<ul class="about_list clear">
+        	<li>          	
+            	<a href="#">   
+                	<span></span>             	
+                	<img src="img/about_list_01.jpg"/ class="grayImg">
+                	<img src="img/about_list_02.jpg"/ class="redImg">
+                </a>
+            </li>
+        	<li>          	
+            	<a href="#">   
+                	<span></span>             	
+                	<img src="img/about_list_03.jpg"/ class="grayImg">
+                	<img src="img/about_list_04.jpg"/ class="redImg">
+                </a>
+            </li>
+        	<li class="last">          	
+            	<a href="#">   
+                	<span></span>             	
+                	<img src="img/about_list_05.jpg"/ class="grayImg">
+                	<img src="img/about_list_06.jpg"/ class="redImg">
+                </a>
+            </li>
+        </ul>
+        <ul class="about_tab clear">
+        	<li class="active">关于我们</li>
+        	<li>荣誉奖项</li>
+        	<li>最新动态</li>
+        	<li>加入我们</li>
+        </ul>
+        <div class="about_content">
+        	<!--about_us-->
+        	<div class="about_us active">
+                <div class="title">
+                    <h3></h3>
+                    <p>双晖传媒（TGVISION）成立于2006年，我们是一支融交互、创新、视觉设计、产品研发于一体的专业品牌策划与制作团队，鼎力为国内外知名企业提供全方位多平台的产品服务解决方案。以专业的交互设计、创新理念、视觉呈现，服务国内外企业多达100余家，成功案例300余例。涉及IT、汽车、教育、房地产、金融等各个行业，拥有包括中国移动、中国电信、百度、新浪、淘宝、索尼、联想、人民网、中国日报等企业在内的成功案例，在国内拥有较高美誉。</p>
+                </div>
+                <ul class="clear">
+                	<li>
+                    	<img src="img/create.gif"/>
+                        <div class="describe">
+                        	<p>我们通过研究理解用户的思维、行为、和目标，挖掘用户对产品使用的潜在需求，通过我们服务于各行业客户的丰富经验，结合品牌的优势进行分析，让用户在情绪上、行为上感知产品的创新、感受完美的体验。超越品牌的价值。</p>                        	
+                        </div>
+                    </li>
+                	<li>
+                    	<img src="img/inspiration.gif"/>
+                        <div class="describe">
+                        	<p>我们是一只富有激情的创新团队。我们将设计通过情感的表达把用户和产品很自然的连接在一起，让用户享受使用产品的愉悦，以此来强化对产品、品牌的体验认知！通过自然的交互和生动的设计展现出来，用一个充满情感化的设计打动用户！</p>                        	
+                        </div>
+                    </li>
+                	<li class="last">
+                    	<img src="img/future.gif"/>
+                        <div class="describe">
+                        	<p>为客户提供品牌化、一站式的解决方案。服务涵盖了互联网，掌上移动设备、桌面平台以及电子消费类产品等。为客户提供从品牌设计、概念设计、交互设计、视觉设计、功能研发到最终产品实现。为客户提供真正具有创新价值的产品体验。</p>                        	
+                        </div>
+                    </li>
+                </ul>            	
+            </div>
+            <!--honor-->
+            <div class="honor">
+            	<p>双晖传媒专精于高品质的全方位设计服务，拥有实力坚强的研发团队及国内外顶尖水平的设计人才，核心成员曾服务于微软、雅虎（美国）、淘宝、新浪、腾讯等全球知名企业，拥有丰富的视觉及交互设计经验。多名设计师在国内外获得设计相关奖项，被多家媒体专访，案例被国内外设计网站收录，如：Newswebpic，CSS DESIGN AWARDS，CSS Winner，CSS Light，站酷，Iconfans，68design，UIRSS，ChinaUI等。</p>
+                <ul class="clear public">
+                	<li>
+                    	<a href="#">
+                        	<img  src="img/honor_01.jpg"/>
+                            <h3>双晖传媒受邀国际权威在线创意杂志NWP专访</h3>
+                            <span>TGVISION双晖传媒受邀国际权威网络在线创意杂志NWP专访,刊登于《NewWebPick》第39期。NWP展示全球最前沿的设计作品，收集国际最新设计资讯，辨析设计艺术的动向。杂志每期下载量4,000,000次，来自全球155个国家的10592个城市。</span>
+                        </a>
+                   	</li>
+                	<li>
+                    	<a href="#">
+                        	<img  src="img/honor_02.jpg"/>
+                            <h3>荣获ChinaUI2010及2011年度十佳UI设计师称号</h3>
+                            <span>TGVISION双晖传媒公司创始人王子年蝉联了国内权威设计机构CHINAUI2011年度十佳UI设计师。年度十佳UI设计师评选是CHINAUI优艾网从2010年起举办的专业设计师评选活动。结合参选设计的作品数量、作品质量、受关注程度等综合评判选得出。</span>
+                        </a>
+                   	</li>
+                	<li>
+                    	<a href="#">
+                        	<img  src="img/honor_03.jpg"/>
+                            <h3>荣获年度中国十佳网页(互动)设计师称号</h3>
+                            <span>双晖传媒创意总监王子年荣获权威设计机构网页设计师联盟（68design）2010-11年度十佳网页设计师称号并接受专访。评选活动是由网页设计师联盟发起的，打造权威的设计师评选活动的品牌。</span>
+                        </a>
+                   	</li>
+                	<li>
+                    	<a href="#">
+                        	<img  src="img/honor_04.jpg"/>
+                            <h3>双晖传媒创意总监王子年接受UIRSS专访</h3>
+                            <span>专访双晖传媒创意总监王子年：深度挖掘以用户体验为中心的设计。UIRSS.com是一个非盈利性全球UI设计专业媒体和信息交流平台，致力于为全球UI爱好者、从业人员和相关企业提供优质的资讯、学习、交流、咨询和设计服务。</span>
+                        </a>
+                   	</li>
+                	<li>
+                    	<a href="#">
+                        	<img  src="img/honor_05.jpg"/>
+                            <h3>双晖传媒官网被收录于国际权威在线创意杂志NWP</h3>
+                            <span>TGVISION双晖传媒官网被收录于国际权威在线创意杂志NWP，NWP展示全球最前沿的设计作品，收集国际最新设计资讯，辨析设计艺术的动向。是全球数码艺术领域中最权威的信息交互平台。</span>
+                        </a>
+                   	</li>
+                </ul>
+            </div>
+            <!--dynamic-->
+			<div class="dynamic">
+                <ul class="clear public">
+                	<li>
+                    	<a href="#">
+                        	<img  src="img/dynamic_01.jpg"/>
+                            <h3>双晖传媒为联想融科智地大连未来城塑造全新模式官网</h3>
+                            <span>双晖传媒为联想控股集团旗下房地产企业融科智地大连未来城塑造全新官网，官网采用未来网页设计趋势之一的“滚动视差”进行设计，多层背景以不同的速度移动，形成立体的运动效果，从不同的空间角度为用户带来非常惊艳的视觉体验。</span>
+                        </a>
+                   	</li>
+                	<li>
+                    	<a href="#">
+                        	<img  src="img/dynamic_02.jpg"/>
+                            <h3>寰球汽车传媒集团官方移动应用Quick Car</h3>
+                            <span>双晖传媒团队受邀为寰球汽车传媒集团官方移动应用Quick Car提供解决方案。Quick Car是一款汽车综合服务类应用，我们负责产品的交互设计，视觉设计，功能研发，测试上线全套解决方案。应用于iOS及Android平台。</span>
+                        </a>
+                   	</li>
+                	<li>
+                    	<a href="#">
+                        	<img  src="img/dynamic_03.jpg"/>
+                            <h3>双晖传媒再度携手中国日报助力亚太官网设计</h3>
+                            <span>以大量的用户调研结果为依据，设计师通过专业的合理布局，有效的栏目结构梳理，最大程度的提升了用户浏览体验。全新的界面设计更具有中国日报的品牌风格，同时我们为网站视觉制定了严格的页面设计规范，保证了网站页面的协调统一性。</span>
+                        </a>
+                   	</li>
+                	<li>
+                    	<a href="#">
+                        	<img  src="img/dynamic_04.jpg"/>
+                            <h3>精品传媒集团《世界》杂志官方APP</h3>
+                            <span>双晖传媒为《世界》杂志量身定制了高端iPad版客户端，以鲜明的旅行态度和独到的杂志视角结合了全新的移动平台进行整合设计，丰富了产品功能的同时提升交互及视觉体验。搭建起与高端读者在线互动的桥梁。</span>
+                        </a>
+                   	</li>
+                	<li>
+                    	<a href="#">
+                        	<img  src="img/dynamic_05.jpg"/>
+                            <h3>双晖传媒合作法国雷诺推出新纬度APP体验版</h3>
+                            <span>双晖传媒合作法国雷诺厂商推出新纬度iPad体验版。抛弃了传统的宣传册和枯燥乏味的各种性能参数。我们为纬度iPad版量身定制的交互体验设计，通过指尖的触控，生动的展示新车的特点。给用户全新流畅的触摸体验。</span>
+                        </a>
+                   	</li>
+                </ul>
+                <div class="more"><a href="#">更多动态</a></div>            	
+            </div>
+            <!--join-->
+			<div class="join">
+            	<ul class="clear">
+                	<li>
+                    	<h3>实习设计师助理</h3>
+                        <p>岗位职责：<br/>
+                        		参与项目设计执行流程，了解产品开发全过程。辅助设计师完成重大项目。参与一定的产品分析，交互设计，产品界面视觉设计及规范文档整理工作；
+                        	
+                        </p>
+                        <p>
+                        	任职要求：<br/>
+                            精通设计类相关软件，热衷于界面设计与交互设计；具有一定的交互分析以及理解能力；优秀的视觉设计感觉与潜力；有完整独立作品可供参考。
+                        </p>
+                        <p>
+                        	招聘人数：2<br/>
+                        	工作地点：北京
+                        </p>
+                        <p>请发简历到：hr@tg-vision.com</p>
+                    </li>
+                	<li>
+                    	<h3>高级视觉设计师</h3>
+                        <p>岗位职责：<br/>
+                        		对用户行为做分析，形成观点和需求，对行业产品趋势分析，评估现有产品的用户体验；撰写用户体验分析文档，配合视觉设计师完成产品设计。
+                        	
+                        </p>
+                        <p>
+                        	任职要求：<br/>
+                            一年以上相关工作经验，性格开朗，积极乐观,良好的沟通、表达能力, 团队意识强烈，热衷于研究各类电子产品或互联网产品，有较好的英语读写能力。
+                        </p>
+                        <p>
+                        	招聘人数：3<br/>
+                        	工作地点：北京
+                        </p>
+                        <p>请发简历到：hr@tg-vision.com</p>
+                    </li>
+                	<li>
+                    	<h3>iOS/Android开发工程师</h3>
+                        <p>岗位职责：<br/>
+                        		负责iOS或Android客户端应用的研发；能与团队成员高效配合，完成项目工作。                     	
+                        </p>
+                        <p>
+                        	任职要求：<br/>
+                            一年以上iOS或Android开发经验； <br/>
+                            有扎实Object C/C++/C/Java语言基础；
+                            熟练掌握开发技术，包括UI、网络等方面；
+                            熟悉相关开发工具和相关测试工具的使用；
+                            学习能力强，有较强分析解决问题的能力；
+                            对移动产品有浓厚兴趣
+                        </p>
+                        <p>
+                        	招聘人数：2<br/>
+                        	工作地点：北京
+                        </p>
+                        <p>请发简历到：hr@tg-vision.com</p>
+                    </li>
+                	<li class="last">
+                    	<h3>PHP开发工程师</h3>
+                        <p>岗位职责：<br/>
+                        		负责网站或相关产品的PHP研发工作；能与团队成员高效配合，完成项目工作。                     	
+                        </p>
+                        <p>
+                        	任职要求：<br/>
+                            至少两年相关工作经验；<br/>
+							一年以上PHP开发及维护工作经验；<br/>
+							熟练掌握MySQL数据库，LA/NMP；<br/>
+							熟练应用HTML/JavaScript;	<br/>
+							熟悉相关开发工具和测试工具的使用；<br/>
+							学习能力强，有较强分析解决问题的能力
+                        </p>
+                        <p>
+                        	招聘人数：2<br/>
+                        	工作地点：北京
+                        </p>
+                        <p>请发简历到：hr@tg-vision.com</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>    
+</div>
+<!-- contact -->
+<div id="contact"  class="dis_top">
+	<div class="area_title">
+    	<h2></h2>
+    </div>  
+    <div class="wrap clear">
+    	<div class="left_side">
+			<ul class="clear">
+            	<li><h2>告诉我们您的需求</h2></li>
+            	<li>
+                	<input type="text" value="填写姓名" class="name" />
+               		<input type="text" value="联系电话" class="contact"/>
+               	</li>
+                <li>
+                	<input type="text" value="电子邮箱" class="emial"/>
+                </li>
+                <li>
+                	<input type="text" value="您的公司" class="con"/>
+                </li>
+                <li>
+                	  <textarea  class="area" >填写详细需求</textarea>
+                </li>
+                <li>
+<!--                	<input type="button" value="发送"/ class="btn">-->
+                    <button class="btn">发送</button>
+                    <span>我们将在1个工作日内回复，资料会保密处理。</span>
+                </li>
+            </ul>
+        </div>   
+    	<div class="right_side">
+        	<h2>与我们在线洽谈</h2>
+            <div class="con">
+            	<a href="#">点击咨询</a>
+            	<a href="#" class="no_mar">点击咨询</a>
+            </div>
+            <ul>
+            	<li>手机 : +86 18511834188<span>[产品/视觉设计咨询]</span></li>
+            	<li>座机 : 010-64314912<span>[工作时间 10:00-18:00]</span></li>
+                <li>微信/QQ : 623326742 或 5629313</li>
+                <li>邮箱 : sh@tg-vision.com</li>
+            </ul>
+            <div class="map" id="allmap">
+            	<img src="img/map.jpg"/>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- footer -->
+<div class="footer">
+	<div class="wrap">
+    	<div class="footer_top">
+        	<h3></h3>
+        	<dl>
+            	<dt>Links</dt>
+                <dd><a href="#">TGVISION双晖传媒百度百科</a></dd>
+                <dd><a href="#">TGVISION双晖传媒新浪官方微博</a></dd>
+                <dd><a href="#">TGVISION&nbsp;2011官网</a></dd>
+            </dl>
+        	<dl class="right_dl">
+            	<dt>Contact us</dt>
+                <dd><em>北京市朝阳区酒仙桥路14号兆维大厦218</em></dd>
+                <dd><span></span></dd>
+                <dd><strong>sh@tg-vision.com</strong></dd>
+            </dl>
+        </div>
+        <div class="footer_bottom">
+        	© 2006-2016 TGVISION双晖传媒. All Right Reserved. 京ICP备12043438号
+        </div>
+    </div>
+</div>
+</body>
+<script src="js/index.js"></script>
+<script>
+// 百度地图API功能
+var map = new BMap.Map("allmap");            // 创建Map实例
+var point = new BMap.Point(116.404, 39.915);    // 创建点坐标
+map.centerAndZoom(point,15);                     // 初始化地图,设置中心点坐标和地图级别。
+map.enableScrollWheelZoom();                            //启用滚轮放大缩小
+</script>
 </html>
