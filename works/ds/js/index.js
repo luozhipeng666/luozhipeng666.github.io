@@ -229,7 +229,21 @@ window.onload=function(){
         }
     })();
 
-
+    //精彩推荐
+    (function(){
+        var pic=getClass(document,'pic')[0];
+        var ol=pic.getElementsByTagName('ol')[0];
+        var smallImg=ol.getElementsByTagName('li');
+        console.log(smallImg);
+        for(var i=0; i<smallImg.length; i++){
+            smallImg[i].onclick=function(){
+                for(var i=0; i<smallImg.length; i++){
+                    smallImg[i].className='';
+                }
+                this.className='active';
+            };
+        }
+    })();
 
 
 
