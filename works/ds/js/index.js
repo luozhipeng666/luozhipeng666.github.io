@@ -228,20 +228,55 @@ window.onload=function(){
             };
         }
     })();
-
     //精彩推荐
     (function(){
         var pic=getClass(document,'pic')[0];
         var ol=pic.getElementsByTagName('ol')[0];
+        var oSpan=pic.getElementsByTagName('span')[0];
+        var oUl=pic.getElementsByTagName('ul')[0];
         var smallImg=ol.getElementsByTagName('li');
+        var bigImg=oUl.getElementsByTagName('li');
+        var timer=null;
+        var num=0;
+        var arrText=[
+            '爸爸去哪儿啦~',
+            '人像摄影中的光影感',
+            '娇柔妩媚、美艳大方'
+        ]
         console.log(smallImg);
         for(var i=0; i<smallImg.length; i++){
+            smallImg[i].index=i;
             smallImg[i].onclick=function(){
-                for(var i=0; i<smallImg.length; i++){
-                    smallImg[i].className='';
-                }
-                this.className='active';
+                tab(this.index);
+                num=this.index;
             };
+            smallImg[i].onmouseover=function(){
+                clearInterval(timer);
+            };
+            smallImg[i].onmouseout=function(){
+                autoPlay();
+            };
+        };
+        function tab(n){
+            oSpan.innerHTML='';
+            for(var i=0; i<smallImg.length; i++){
+                smallImg[i].className='';
+                bigImg[i].className='';
+            };
+            smallImg[n].className='active';
+            bigImg[n].className='active';
+            oSpan.innerHTML=arrText[n];
+        }
+        autoPlay();
+        function autoPlay(){
+            clearInterval(timer);
+            timer=setInterval(function(){
+                num++;
+                if(num>=smallImg.length){
+                    num=0;
+                };
+                tab(num);
+            },2500);
         }
     })();
 

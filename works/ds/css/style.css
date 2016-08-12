@@ -274,7 +274,8 @@ cursor:pointer; }
 
 .pic{ width:318px; height:180px; background:#f8f8f8;  border-radius:6px;}
 .pic ul{ position:relative; padding:13px 10px 0 12px;  float:left;}
-.pic ul li{ width:223px; height:133px;  }
+.pic ul .active{ display:block;}
+.pic ul li{ width:223px; height:133px; display:none; }
 .pic ul li a{ width:223px; height:133px; }
 .pic ol{ float:left; padding-top:12px;}
 .pic ol li{ width:54px; height:30px; margin-bottom:13px; border:3px solid #fff; }
