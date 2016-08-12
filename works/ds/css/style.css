@@ -256,16 +256,16 @@ cursor:pointer; }
 .con .calendar{ width:301px;  position:relative; }
 .con .calendar h2{}
 .con .calendar h2 span{ font-size:12px; font-weight:bold; color:#333; float:left; width:43px; background:#f7f7f6; height:34px; line-height:34px; text-align:center; }
-.con .calendar ol{ padding-bottom:22px; }
+.con .calendar ol{ padding-bottom:22px; position:relative;}
 .con .calendar li{ width:40px; height:40px; float:left; line-height:40px; text-align:center; background:#ededed; margin:0 0 2px 3px; font-weight:bold; color:#666; position:relative; }
 .con .calendar .normal {  background:#f8f8f8; }
 .con .calendar li img{ position:absolute; left:0; top:0;  cursor:pointer; }
 .con .calendar li .active{  width:36px; height:36px; border:2px solid #d30408;}
 .con .calendar li .img{ width:40px; height:40px; }
 
-.today_info{ position:absolute; left:180px; top:167px; width:289px; height:86px; box-shadow: 4px 4px 0 #b2b2b2; border:2px solid #c0c0c0; background:#fff; padding:10px 15px; display:none;}
+.today_info{ position:absolute; left:180px; top:168px; width:289px; height:86px; box-shadow: 4px 4px 0 #b2b2b2; border:2px solid #c0c0c0; background:#fff; padding:10px 15px; display:none;}
 .today_info .img { width:81px; height:81px; border:2px solid #dbdbdb; float:left;  }
-.today_info img{ width:81px; height:81px; }
+.today_info img{ width:80px; height:80px; }
 .today_info .text { float:right; width:200px; position:relative; right:0px; font-size:12px;} 
 .today_info .text em{ font-size:16px; color:#ccc; font-weight:bold; }
 .today_info .text strong{  color:#333;}

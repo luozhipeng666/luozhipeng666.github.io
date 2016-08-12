@@ -100,7 +100,7 @@ window.onload=function(){
             if(iNow>0){
                 iNow=-(arrData.length-1)
             }
-            console.log(iNow);
+            //console.log(iNow);
             mTween(oUl,{'top':iNow*iH},300,'elasticBoth',function(){
                 onOff=true;
             });
@@ -142,8 +142,8 @@ window.onload=function(){
         };
         var tabCon1=new Drag('tabCon1');
         tabCon1.tab();
-        console.log(tabCon1.aLi[0].getAttribute('class').split(' '));
-        console.log(tabCon1.aDiv);
+        //console.log(tabCon1.aLi[0].getAttribute('class').split(' '));
+        //console.log(tabCon1.aDiv);
         var tabCon2=new Drag('tabCon2');
         tabCon2.tab();
     })();
@@ -155,7 +155,7 @@ window.onload=function(){
         function tab(tabNav,tabCon){
             var aLi=tabNav.find('li');
             var aUl=tabCon.children();
-            console.log(aLi.length)
+            //console.log(aLi.length)
             aUl.hide().eq(0).show();
             aLi.each(function(index){
                 $(this).on('mouseover',function(){
@@ -172,7 +172,7 @@ window.onload=function(){
     (function(){
         var oL=getClass(document,'bbs_list')[0];
         var aLi=oL.getElementsByTagName('li');
-        console.log(aLi);
+        //console.log(aLi);
         for(var i=0; i<aLi.length; i++){
             aLi[i].onmouseover=function(){
                 for(var i=0; i<aLi.length; i++){
@@ -201,7 +201,7 @@ window.onload=function(){
         var aLi=oUl.getElementsByTagName('li');
         var oP=oUl.getElementsByTagName('p')[0];
         var p=null;
-        console.log(aLi);
+        //console.log(aLi);
         for(var i=0; i<aLi.length; i++){
             aLi[i].index=i;
             aLi[i].onmouseenter=function(){
@@ -243,7 +243,7 @@ window.onload=function(){
             '人像摄影中的光影感',
             '娇柔妩媚、美艳大方'
         ]
-        console.log(smallImg);
+        //console.log(smallImg);
         for(var i=0; i<smallImg.length; i++){
             smallImg[i].index=i;
             smallImg[i].onclick=function(){
@@ -279,7 +279,24 @@ window.onload=function(){
             },2500);
         }
     })();
-
+    //日历交互
+    (function(){
+        var calendar=getClass(document,'calendar')[0];
+        var calendarLis=calendar.getElementsByTagName('ol')[0];
+        var classImg=getClass(calendarLis,'img');
+        var todayInfo=getClass(document,'today_info')[0];
+        for(var i=0; i<classImg.length; i++){
+            classImg[i].onmouseover=function(){
+                console.log(this.parentNode.offsetLeft);
+                todayInfo.style.display='block';
+                todayInfo.style.top=this.parentNode.offsetTop+'px';
+                todayInfo.style.left=this.parentNode.offsetLeft+this.offsetWidth/2+this.offsetWidth+'px';
+            };
+            classImg[i].onmouseout=function(){
+                todayInfo.style.display='none';
+            };
+        };
+    })();
 
 
     //getClass
