@@ -1,0 +1,319 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<link href="style/weibo.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="znsArea">
+<!--留言-->
+     <div class="takeComment">
+        <textarea name="textarea" class="takeTextField" id="tijiaoText"></textarea>
+        <div class="takeSbmComment">
+            <input type="button" id="btn1" class="inputs" value="" />
+            <span>(可按 Enter 回复)</span>
+        </div>
+    </div>
+<!--已留-->
+    <div class="commentOn">
+        <div class="messList" id="div1" style="height:502px">
+        	<!--<div class="reply">
+                <p class="replyContent">卫士，新款卫士将推出总共14种车身式样。其中， XS旅行款车型售价为32295英镑(约33.6万元)。</p>
+                <p class="operation">
+                    <span class="replyTime">2015-09-08 16:37:60</span>
+                    <span class="handle">
+                    	<a href="javascript:;" class="top">0</a>
+                        <a href="javascript:;" class="down_icon">0</a>
+                        <a href="javascript:;" class="cut">删除</a>
+                    </span>
+                </p>
+            </div>-->
+        </div>
+        <div class="page" id="page">
+       <!-- <a href="weibo.html"></a>-->
+        	<a href="javascript:;" class="active">1</a>
+        	<!--<a href="javascript:;">2</a>
+        	<a href="javascript:;">3</a>-->
+        </div>
+    </div>
+</div>
+<script src="myajax_1.1.0.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	/*
+		1.当点击按钮的时候 ，将输入的内容让到表中。
+			请求这个接口。		
+	*/
+	var oBtn=document.getElementById('btn1');			// 提交按钮的id
+	var text=document.getElementById('tijiaoText');		// 获取textarea的id
+	var div1=document.getElementById('div1');				//获取留言板块id
+	var pageDiv=document.getElementById('page'); 		//页数板块的id 
+	var hash=window.location.hash;									//获取hash值
+	var hashs;  																	//定义一个变量存hash值
+	if(!hash){														//默认没有，给它一个默认值1，
+		window.location.hash='page='+1;
+	}else{																// 页面刷新的时候，重新获取hash值
+		hashs=hash.split('=')[1];
+	}
+		//console.log(hashs)
+	var newCount;											// 定义一个变量，方便生成页数的时候判断
+	//console.log(has)
+	//点击添加内容
+	text.focus();
+	/*
+		focus()  焦点触发
+		
+		select() 既可以焦点触发也可以选中文本
+	*/
+	//a{blr:expression(this.onFocus=this.blur())}   CSS写法  这是什么意思？
+	//blr没有特殊意思，expression 条件，这句话的意思是链接 a 在获得焦点的同时失去焦点。如果你用的是图片链接什么的，他不会显示周边的虚线。 
+	//<a href="#" onfocus=this.blur();>链接标题</a> JS写法
+	oBtn.onclick=function(){
+		var val=text.value;
+		//以下正则是替换首尾空格为空
+		val = val.replace(/^\s+|\s+$/,'');
+		if(!val){
+			alert('请输入内容');
+			text.value='';
+			return;
+		}
+		ajax({
+			url:'weibo.php',
+			data:'act=add&content='+val,
+			succ:function(data){
+				if(!data.error){
+				//var div=createDiv(val,data);
+				//div1.insertBefore(div,div1.children[0]);
+				//createDiv(val,data);
+		//上面不需要直接添加, 因为点击的时候把数据传给后台了，然后获取数据的时候直接生成
+					window.location.hash='page='+1;
+					hashs=1;
+					getData();
+					createPage();
+				}
+			}
+		});	
+		text.value='';
+	}
+	//点enter键发送
+	document.onkeydown=function(ev){
+/*		if(!text.value){
+			alert('请输入内容');
+			return;
+		}*/
+		if(ev.keyCode==13){
+			oBtn.onclick();
+		}
+	}
+	/*
+				weibo.php?act=get_page_count	获取页数
+				返回：{count:页数}
+				生成页数
+	*/	
+	createPage();
+	function createPage(){
+	  ajax({
+		  url:'weibo.php',
+		  data:'act=get_page_count',
+		  succ:function(data){
+			  console.log(data.count);
+			  pageDiv.innerHTML='';			  
+			  if(data.count>7){				 
+				  if(hashs>4){
+					  newCount=hashs*1;
+				  }else{
+				  	 newCount=4;
+				  }
+				  //不能大于总页数-3  因为生成的时候是后面加了3，如果后面没有数据，没有必要生成那么多页数   实际情况根据项目需求
+				  if(newCount>data.count-3){
+				  	newCount=data.count-3
+				  }
+				  for(var i=newCount-3; i<newCount+4; i++){
+					  if(i==hashs){
+					  	 pageDiv.innerHTML+='<a href="javascript:;" class="active">'+i+'</a>';
+					  }else{
+						  pageDiv.innerHTML+='<a href="javascript:;">'+i+'</a>';
+					  }				  
+				  }				  
+			  }else{
+				  newCount=data.count;
+				  for(var i=1; i<newCount+1; i++){
+					  if(i==hashs){
+					  	 pageDiv.innerHTML+='<a href="javascript:;" class="active">'+i+'</a>';
+					  }else{
+						  pageDiv.innerHTML+='<a href="javascript:;">'+i+'</a>';
+					  }	
+				  }
+			  }
+			  var aS=pageDiv.getElementsByTagName('a');
+				
+				for(var i=0; i<aS.length; i++){
+					aS[i].onclick=function(){
+						hashs=this.innerHTML*1;
+						window.location.hash='page='+hashs;
+
+					}		
+				}
+		  }
+	  });		
+	}
+	window.onhashchange=function(){
+		getData();
+		createPage();		
+	}
+	/*
+		weibo.php?act=get&page=1		获取一页数据
+		返回：[{id: ID, content: "内容", time: 时间戳, acc: 顶次数, ref: 踩次数}, {...}, ...]	
+	*/	
+	getData();
+	function getData(){
+		ajax({
+			url:'weibo.php',
+			data:'act=get&page='+hashs,
+			succ:function(arr){
+				div1.innerHTML='';
+				for(var i=0; i<arr.length; i++){
+					var div=createDiv(arr[i].content,arr[i]);
+					div1.appendChild(div);
+				}		
+			}
+		});
+	}
+		/*
+		weibo.php?act=add&content=xxx	添加一条
+		返回：{error:0, id: 新添加内容的ID, time: 添加时间}
+	*/
+	function setCookie(key,value,time){
+		time=time||0;
+		var oDate=new Date();
+		oDate.setDate(oDate.getDate()+time);
+		document.cookie=key+'='+value+';expires='+oDate;
+	}
+	function getCookie(key){
+		var str=document.cookie;
+		var arr=str.split('; ');
+		for(var i=0; i<arr.length; i++){
+			var keys=arr[i].split('=')[0];
+			var values=arr[i].split('=')[1];
+			if(key){
+				if(keys===key){
+					console.log(values);
+					return values;
+				}
+			}			
+		}
+		return '';
+	}	
+	//创建div
+	function createDiv(val,data){
+		var div=document.createElement('div');
+						div.className='reply';
+						div.innerHTML='<p class="replyContent">'+val+'</p>'+
+               				 '<p class="operation">'+
+                    		'<span class="replyTime">'+getTime1(data.time)+'</span>'+
+                    		'<span class="handle">'+
+                    		'<a href="javascript:;" class="top">'+data.acc+'</a>'+
+                        	'<a href="javascript:;" class="down_icon">'+data.ref+'</a>'+
+                       		'<a href="javascript:;" class="cut">删除</a>'
+                  	  		'</span>'
+               				'</p>';
+		/*
+			oTop=[{'name':'top'},{'id':data.id}]
+			cookie是这样,通过获取cookie值来判断是否点击了一次
+		*/					
+		var oTop;		//存一个变量，变量是数组，用来和数据中的每个id匹配
+		if(getCookie('oTop')){					// 如果有，获取cookie值 得到的是一个数组的对象
+			oTop=JSON.parse(getCookie('oTop'));	
+		}else{												// 如果没有，默认存一个数据
+			oTop=[{'name':'top'}]
+		}
+		console.log(getCookie('oTop'));
+		//setCookie('oTop',JSON.stringify(oTop));
+			console.log(setCookie('oTop',JSON.stringify(oTop)));						
+		div.onclick=function(ev){
+			/*
+			weibo.php?act=acc&id=num			顶某一条数据
+				返回：{error:0}
+			*/
+			
+			if(ev.target.className=='top'){
+				var tet=ev.target.innerHTML;
+				var onOff=false;					//定义一个开关，默认没有点击
+				for(var i=0; i<oTop.length;i++){
+					if(oTop[i].id==data.id){
+						onOff=true;					//当获取到的cookie值的id和点击这条数据的id是一样，证明已经点击了一次	
+					}
+				}
+				if(!onOff){					//默认没点击走这里
+					ajax({
+						url:'weibo.php',
+						data:'act=acc&id='+data.id,
+						succ:function(json){
+							if(!json.error){
+								oTop.push({'id':data.id});			// 点击之后，给oTop添加这条数据的id
+								setCookie('oTop',JSON.stringify(oTop),1);		//设置cookie的存留的时间，因为cookie值浏览器关闭的时候就没有了，所以要设置下时间，1就是默认保留一天						
+								ev.target.innerHTML=++tet;
+							}
+						}
+					});					
+				}else{
+					alert('一天只能赞一次哦!')
+				}				 
+
+			}
+			/*
+			weibo.php?act=ref&id=num			踩某一条数据
+				返回：{error:0}			
+			*/
+			(function(){
+			  if(ev.target.className=='down_icon'){
+				  ajax({
+					  url:'weibo.php',
+					  data:'act=ref&id='+data.id,
+					  succ:function(json){
+						  var tet=ev.target.innerHTML;
+						  if(!json.error){
+							  ev.target.innerHTML=++tet;
+						  }
+					  }
+				  });
+			  }					
+			})();
+
+			/*
+			weibo.php?act=del&id=num			删除某一条数据
+				返回：{error:0}		
+		*/
+			if(ev.target.className=='cut'){
+				ajax({
+					url:'weibo.php',
+					data:'act=del&id='+data.id,
+					succ:function(json){
+						if(!json.error){
+							getData();
+							createPage();
+						}
+					}
+				});
+			}											
+		}
+		return div;
+	}	
+	function getTime1(t){
+		var iNew=new Date(t*1000);
+		var iYear=iNew.getFullYear();
+		var iMonth=iNew.getMonth()+1;
+		var iDate=iNew.getDate();
+		var iHours=iNew.getHours();
+		var iMin=iNew.getMinutes();
+		var iSe=iNew.getSeconds();
+		return iYear+'-'+toChange(iMonth)+'-'+toChange(iDate)+' '+toChange(iHours)+':'+toChange(iMin)+':'+toChange(iSe);
+	}
+	function toChange(n){
+		return n<10?'0'+n:''+n;
+	}
+
+</script>
+</body>
+
+</html>
